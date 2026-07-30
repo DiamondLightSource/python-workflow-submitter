@@ -1,0 +1,8 @@
+_commit: b78ea0d
+_src_path: git@github.com:DiamondLightSource/python-interface-to-workflows.git
+author_email: matthew.carre@diamond.ac.uk
+author_name: Matthew Carre
+description: A way of submitting workflows to graphql in python
+github_org: Matt-Carre
+project_name: python_workflow_submitter
+repo_name: python-workflow-submitter

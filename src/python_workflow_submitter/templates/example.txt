@@ -1,0 +1,207 @@
+apiVersion: argoproj.io/v1alpha1
+kind: WorkflowTemplate
+metadata:
+  name: hera-example
+  annotations:
+    workflows.argoproj.io/description: |-
+      Replicates the functionality of
+      example.yaml
+    workflows.argoproj.io/title: example remade via hera
+    workflows.diamond.ac.uk/repository: https://github.com/Matt-Carre/python-workflow-submitter
+  labels:
+    workflows.diamond.ac.uk/science-group-examples: 'true'
+spec:
+  entrypoint: workflowentry
+  podSpecPatch: '{"containers": [{"name": "main", "resources": {"limits": {"cpu":
+    "1", "memory": "1Gi"}, "requests": {"cpu": "1", "memory": "1Gi"}}}]}'
+  templates:
+  - name: workflowentry
+    dag:
+      tasks:
+      - name: params
+        template: generate-parameters
+        arguments:
+          parameters:
+          - name: png
+            value: 'True'
+          - name: jpg
+            value: 'True'
+          - name: jpeg
+            value: 'True'
+          - name: tif
+            value: 'True'
+          - name: tiff
+            value: 'True'
+      - name: create-image
+        depends: params
+        template: create-image
+        withParam: '{{tasks.params.outputs.parameters.out-parameters}}'
+        arguments:
+          parameters:
+          - name: width
+            value: '{{item.width}}'
+          - name: height
+            value: '{{item.height}}'
+          - name: weights
+            value: '{{item.weights}}'
+          - name: extension
+            value: '{{item.extension}}'
+      - name: to-hdf5
+        depends: create-image
+        template: to-hdf5
+        arguments:
+          parameters:
+          - name: paths
+            value: '{{tasks.create-image.outputs.parameters.out-paths}}'
+  - name: generate-parameters
+    inputs:
+      parameters:
+      - name: png
+      - name: jpg
+      - name: jpeg
+      - name: tif
+      - name: tiff
+    outputs:
+      parameters:
+      - name: out-parameters
+        valueFrom:
+          path: /tmp/parameters.json
+    script:
+      image: ' ghcr.io/diamondlightsource/python-interface-to-workflows-image'
+      source: |-
+        import os
+        import sys
+        sys.path.append(os.getcwd())
+        import json
+        try: jpeg = json.loads(r'''{{inputs.parameters.jpeg}}''')
+        except: jpeg = r'''{{inputs.parameters.jpeg}}'''
+        try: jpg = json.loads(r'''{{inputs.parameters.jpg}}''')
+        except: jpg = r'''{{inputs.parameters.jpg}}'''
+        try: png = json.loads(r'''{{inputs.parameters.png}}''')
+        except: png = r'''{{inputs.parameters.png}}'''
+        try: tif = json.loads(r'''{{inputs.parameters.tif}}''')
+        except: tif = r'''{{inputs.parameters.tif}}'''
+        try: tiff = json.loads(r'''{{inputs.parameters.tiff}}''')
+        except: tiff = r'''{{inputs.parameters.tiff}}'''
+
+        import json
+        params: list[dict[str, int | list[int] | str] | None] = [{'width': 500, 'height': 500, 'weights': [255, 1, 100], 'extension': 'png'} if png.lower() == 'true' else None, {'width': 600, 'height': 200, 'weights': [100, 150, 100], 'extension': 'jpg'} if jpg.lower() == 'true' else None, {'width': 300, 'height': 400, 'weights': [100, 150, 100], 'extension': 'jpeg'} if jpeg.lower() == 'true' else None, {'width': 300, 'height': 200, 'weights': [230, 100, 1], 'extension': 'tif'} if tif.lower() == 'true' else None, {'width': 200, 'height': 300, 'weights': [230, 100, 1], 'extension': 'tiff'} if tiff.lower() == 'true' else None]
+        params_to_write: list[dict[str, int | list[int] | str]] = [image_params for image_params in params if image_params is not None]
+        with open('/tmp/parameters.json', 'w') as f:
+            json.dump(params_to_write, f)
+      command:
+      - python
+      volumeMounts:
+      - name: tmpdir
+        mountPath: /tmp
+  - name: create-image
+    inputs:
+      parameters:
+      - name: width
+      - name: height
+      - name: weights
+      - name: extension
+    outputs:
+      artifacts:
+      - name: '{{inputs.parameters.extension}}-image'
+        path: /tmp/{{inputs.parameters.extension}}-image.{{inputs.parameters.extension}}
+        archive:
+          none: {}
+      parameters:
+      - name: out-paths
+        valueFrom:
+          path: /tmp/{{inputs.parameters.extension}}-path.json
+    script:
+      image: ' ghcr.io/diamondlightsource/python-interface-to-workflows-image'
+      source: |-
+        import os
+        import sys
+        sys.path.append(os.getcwd())
+        import json
+        try: extension = json.loads(r'''{{inputs.parameters.extension}}''')
+        except: extension = r'''{{inputs.parameters.extension}}'''
+        try: height = json.loads(r'''{{inputs.parameters.height}}''')
+        except: height = r'''{{inputs.parameters.height}}'''
+        try: weights = json.loads(r'''{{inputs.parameters.weights}}''')
+        except: weights = r'''{{inputs.parameters.weights}}'''
+        try: width = json.loads(r'''{{inputs.parameters.width}}''')
+        except: width = r'''{{inputs.parameters.width}}'''
+
+        import json
+        from PIL import Image
+
+        def create_pattern(width: int, height: int, weights: tuple[int, int, int]) -> Image.Image:
+            print(f'width: {width}')
+            print(f'height: {height}')
+            print(f'RBG weights: {weights}')
+            image = Image.new('RGB', (width, height))
+            pixels = image.load()
+            for i in range(width):
+                for j in range(height):
+                    pixels[i, j] = ((i + j * 50) % weights[0], weights[1], (i * 300 + j) % weights[2])
+            return image
+        image = create_pattern(width, height, weights)
+        path = f'/tmp/{extension}-image.{extension}'
+        image.save(path)
+        with open(f'/tmp/{extension}-path.json', 'w') as f:
+            json.dump(path, f)
+      command:
+      - python
+      volumeMounts:
+      - name: tmpdir
+        mountPath: /tmp
+  - name: to-hdf5
+    inputs:
+      parameters:
+      - name: paths
+    outputs:
+      artifacts:
+      - name: hdf5output
+        path: /tmp/images.hdf5
+        archive:
+          none: {}
+    script:
+      image: ' ghcr.io/diamondlightsource/python-interface-to-workflows-image'
+      source: |-
+        import os
+        import sys
+        sys.path.append(os.getcwd())
+        import json
+        try: paths = json.loads(r'''{{inputs.parameters.paths}}''')
+        except: paths = r'''{{inputs.parameters.paths}}'''
+
+        import h5py
+        import numpy as np
+        from PIL import Image
+        print('creating hdf5 file')
+        with h5py.File('/tmp/images.hdf5', 'w') as f:
+            for i, path in enumerate(paths):
+                path = path.strip('"')
+                print(f'Got {path}')
+                with Image.open(path) as image:
+                    arr = np.array(image)
+                    f.create_dataset(f'image_{i}', data=arr, dtype=arr.dtype)
+        print('done')
+      command:
+      - python
+      volumeMounts:
+      - name: tmpdir
+        mountPath: /tmp
+  tolerations:
+  - effect: NoSchedule
+    key: nodetype
+    operator: Equal
+    value: gpu
+  - effect: NoSchedule
+    key: nodegroup
+    operator: Equal
+    value: workflows
+  volumeClaimTemplates:
+  - metadata:
+      name: tmpdir
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: 1Gi
