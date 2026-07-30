@@ -28,7 +28,7 @@ def test_set_token_env_variable(
     mock_load_env: MagicMock,
     return_present: bool,
 ):
-    port=8000
+    port = 8000
     mock_gen_code_verifier.return_value = "verifier"
     mock_gen_code_challenge.return_value = ("challenge", "S256")
     os.environ["AUTH"] = "auth_url_code"
@@ -70,6 +70,7 @@ def test_set_token_env_variable(
         dotenv_path="src/.env",
         override=True,
     )
+
 
 @patch("python_workflow_submitter.auth.keycloak_checker.exit")
 @patch("python_workflow_submitter.auth.keycloak_checker.print")

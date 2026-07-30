@@ -1,4 +1,3 @@
-
 import json
 import os
 
@@ -201,4 +200,3 @@ example.yaml""",
 
 with open("src/python_workflow_submitter/templates/example.txt", "w") as div:
     div.write(w.to_yaml())  # pyright: ignore[reportUnknownMemberType]
-

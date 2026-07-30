@@ -19,12 +19,12 @@ class DecodedToken(TypedDict):
 
 def set_token_env_variable() -> str:
     keycloak_openid = KeycloakOpenID(
-                client_id="workflows-cli",
-                server_url="https://identity.diamond.ac.uk/",
-                realm_name="dls",
-                client_secret_key="",
-                pool_maxsize=1,
-            )
+        client_id="workflows-cli",
+        server_url="https://identity.diamond.ac.uk/",
+        realm_name="dls",
+        client_secret_key="",
+        pool_maxsize=1,
+    )
     port = 8000
     code_verifier = generate_code_verifier()
     code_challenge, code_challenge_method = generate_code_challenge(code_verifier)
