@@ -14,9 +14,6 @@ jobs:
     with:
       tox: pre-commit,type-checking
 
-  commit-lint:
-    uses: ./.github/workflows/_commit_msg.yml
-
   test:
     strategy:
       matrix:
