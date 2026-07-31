@@ -6,7 +6,6 @@ build-backend = "setuptools.build_meta"
 name = "python_workflow_submitter"
 classifiers = [
     "Development Status :: 3 - Alpha",
-    "License :: OSI Approved :: Apache Software License",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
@@ -27,7 +26,7 @@ dependencies = [
     "pytest-asyncio",
 ] # Add project dependencies here, e.g. ["click", "numpy"]
 dynamic = ["version"]
-license.file = "LICENSE"
+license = "Apache-2.0"
 readme = "README.md"
 requires-python = ">=3.11"
 
@@ -56,7 +55,8 @@ python-workflow-submitter = "python_workflow_submitter.__main__:main"
 
 [project.urls]
 GitHub = "https://github.com/Matt-Carre/python-workflow-submitter"
-
+Homepage = "https://github.com/Matt-Carre/python-workflow-submitter"
+issues = "https://github.com/Matt-Carre/python-workflow-submitter/issues"
 [[project.authors]] # Further authors may be added by duplicating this section
 email = "matthew.carre@diamond.ac.uk"
 name = "Matthew Carre"
@@ -66,37 +66,37 @@ version_file = "src/python_workflow_submitter/_version.py"
 
 [tool.pyright]
 typeCheckingMode = "standard"
-reportMissingImports = false # Ignore missing stubs in imported modules
+reportMissingImports = false                 # Ignore missing stubs in imported modules
 reportMissingTypeStubs = "none"
-reportMissingModuleSource="warning"
-reportInvalidTypeForm="warning"
-reportUndefinedVariable="warning"
-reportAbstractUsage="warning"
-reportArgumentType="warning"
-reportAssertTypeFailure="warning"
-reportAssignmentType="warning"
-reportAttributeAccessIssue="warning"
-reportCallIssue="warning"
-reportGeneralTypeIssues="warning"
-reportInconsistentOverload="warning"
-reportIndexIssue="warning"
-reportInvalidTypeArguments="warning"
-reportNoOverloadImplementation="warning"
-reportOperatorIssue="warning"
-reportOptionalSubscript="warning"
-reportOptionalMemberAccess="warning"
-reportOptionalCall="warning"
-reportOptionalIterable="warning"
-reportOptionalContextManager="warning"
-reportOptionalOperand="warning"
-reportRedeclaration="warning"
-reportReturnType="warning"
-reportTypedDictNotRequiredAccess="warning"
-reportPrivateImportUsage="warning"
-reportUnboundVariable="warning"
-reportUnhashable="warning"
-reportUnusedCoroutine="warning"
-reportUnusedExcept="warning"
+reportMissingModuleSource = "warning"
+reportInvalidTypeForm = "warning"
+reportUndefinedVariable = "warning"
+reportAbstractUsage = "warning"
+reportArgumentType = "warning"
+reportAssertTypeFailure = "warning"
+reportAssignmentType = "warning"
+reportAttributeAccessIssue = "warning"
+reportCallIssue = "warning"
+reportGeneralTypeIssues = "warning"
+reportInconsistentOverload = "warning"
+reportIndexIssue = "warning"
+reportInvalidTypeArguments = "warning"
+reportNoOverloadImplementation = "warning"
+reportOperatorIssue = "warning"
+reportOptionalSubscript = "warning"
+reportOptionalMemberAccess = "warning"
+reportOptionalCall = "warning"
+reportOptionalIterable = "warning"
+reportOptionalContextManager = "warning"
+reportOptionalOperand = "warning"
+reportRedeclaration = "warning"
+reportReturnType = "warning"
+reportTypedDictNotRequiredAccess = "warning"
+reportPrivateImportUsage = "warning"
+reportUnboundVariable = "warning"
+reportUnhashable = "warning"
+reportUnusedCoroutine = "warning"
+reportUnusedExcept = "warning"
 
 
 [tool.pytest.ini_options]
