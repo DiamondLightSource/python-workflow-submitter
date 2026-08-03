@@ -67,7 +67,7 @@ spec:
         valueFrom:
           path: /tmp/parameters.json
     script:
-      image: ' ghcr.io/diamondlightsource/python-interface-to-workflows-image'
+      image: ghcr.io/diamondlightsource/python-interface-to-workflows-image
       source: |-
         import os
         import sys
@@ -112,7 +112,7 @@ spec:
         valueFrom:
           path: /tmp/{{inputs.parameters.extension}}-path.json
     script:
-      image: ' ghcr.io/diamondlightsource/python-interface-to-workflows-image'
+      image: ghcr.io/diamondlightsource/python-interface-to-workflows-image
       source: |-
         import os
         import sys
@@ -161,7 +161,7 @@ spec:
         archive:
           none: {}
     script:
-      image: ' ghcr.io/diamondlightsource/python-interface-to-workflows-image'
+      image: ghcr.io/diamondlightsource/python-interface-to-workflows-image
       source: |-
         import os
         import sys
