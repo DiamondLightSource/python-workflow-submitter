@@ -7,8 +7,7 @@
 
  Python alternative to creating and running argo workflows in the Data Analysis Platform
 
-This is where you should write a short paragraph that describes what your module does,
-how it does it, and why people should use it.
+This allows for the submission of Hera workflow objects to Diamond's GraphQL API.
 
 What            | Where
 :---:           | :---:
@@ -16,18 +15,10 @@ Source          | <https://github.com/Matt-Carre/python-workflow-submitter>
 Docker          | `docker run ghcr.io/Matt-Carre/python-workflow-submitter:latest`
 Releases        | <https://github.com/Matt-Carre/python-workflow-submitter/releases>
 
-This is where you should put some images or code snippets that illustrate
-some relevant examples. If it is a library then you might put some
-introductory code here:
+To submit your workflow notebook:
 
 ```python
-from python_workflow_submitter import __version__
+from python_workflow_submitter.submit_workflow import submit_workflow
 
-print(f"Hello python_workflow_submitter {__version__}")
-```
-
-Or if it is a commandline tool then you might put some example commands here:
-
-```
-python -m python_workflow_submitter --version
+await submit_workflow(w)
 ```
