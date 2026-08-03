@@ -48,3 +48,46 @@ mutation Submit($visit: VisitInput!, $manifest: String!) {
     )
     name = str(result["submitWorkflow"]["name"])
     print(f"Job '{name}' submitted to {visit}")
+
+
+async def submit_stock_workflow(
+    name: str,
+    parameters: dict,
+    host: str = str(os.environ.get("HOST")),
+    visit: str = str(os.environ.get("VISIT")),
+):
+    token: str = set_token_env_variable()
+    transport = AIOHTTPTransport(
+        url=host,
+        headers={"Authorization": f"Bearer {token}"},
+    )
+    client = Client(
+        transport=transport,
+        fetch_schema_from_transport=True,
+    )
+    mutation = gql("""
+mutation SubmitGeneric
+($name: String!, $visit: VisitInput!, $parameters: JSON!){
+submitWorkflowTemplate(
+    name: $name
+    visit: $visit
+    parameters: $parameters
+    ){
+    name
+    }
+}
+""")
+    result = await client.execute_async(
+        mutation,
+        variable_values={
+            "name": name,
+            "visit": {
+                "proposalCode": str(visit[:2]),
+                "proposalNumber": int(visit[2:7]),
+                "number": int(visit[-1]),
+            },
+            "parameters": parameters,
+        },
+    )
+    name = str(result["submitWorkflowTemplate"]["name"])
+    print(f"Job '{name}' submitted to {visit}")

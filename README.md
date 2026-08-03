@@ -22,3 +22,35 @@ from python_workflow_submitter.submit_workflow import submit_workflow
 
 await submit_workflow(w)
 ```
+To submit a workflow script:
+```python 
+import asyncio
+from python_workflow_submitter.submit_workflow import submit_workflow
+
+asyncio.run(submit_workflow(w))
+```
+
+To submit a generic workflow via a graphql mutation in a notebook:
+
+```python
+import os
+from python_workflow_submitter.submit_workflow import submit_stock_workflow
+
+await submit_stock_workflow(
+        "example-template",
+        {"png": "True", "jpg": "False", "jpeg": "True", "tif": "True", "tiff": "False"},
+        host= str(os.environ.get("HOST")),
+        visit= str(os.environ.get("VISIT")),
+    )
+```
+Alternatively:
+```python 
+import asyncio
+from python_workflow_submitter.submit_workflow import submit_workflow
+
+asyncio.run(submit_stock_workflow(
+        "example-template",
+        {"png": "True", "jpg": "False", "jpeg": "True", "tif": "True", "tiff": "False"},
+        host= str(os.environ.get("HOST")),
+        visit= str(os.environ.get("VISIT")),
+    ))

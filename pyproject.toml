@@ -24,6 +24,7 @@ dependencies = [
     "dotenv",
     "python-keycloak",
     "pytest-asyncio",
+    "asyncio",
 ] # Add project dependencies here, e.g. ["click", "numpy"]
 dynamic = ["version"]
 license = "Apache-2.0"
@@ -47,6 +48,9 @@ dev = [
     "dotenv",
     "python-keycloak",
     "pytest-asyncio",
+    "asyncio",
+    "build",
+    "twine",
 ]
 
 
