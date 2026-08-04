@@ -54,3 +54,33 @@ asyncio.run(submit_stock_workflow(
         host= str(os.environ.get("HOST")),
         visit= str(os.environ.get("VISIT")),
     ))
+
+To list workflows:
+```python
+import asyncio
+from python_workflow_submitter.list_workflows import list_workflows
+
+asyncio.run(list_workflows(limit=5,filter={"scienceGroup":"EXAMPLES"}))
+
+```
+
+To list workflows in specific visit with optional filtering:
+```python
+import asyncio
+from python_workflow_submitter.list_workflows import list_workflows_in_visit
+
+asyncio.run(list_workflows(limit=5,filter=filter: {
+    "creator": "gmg29649",
+    "template": "example-template",
+  	"workflowStatusFilter": {"succeeded": True}
+  }))
+
+```
+
+To list information about a workflow in a visit with a specific name:
+```python
+import asyncio
+from python_workflow_submitter.list_workflows import list_workflows_in_visit
+
+asyncio.run(info_about_workflow(name="conditional-steps-tswxm",visit=ks10000-3))
+```

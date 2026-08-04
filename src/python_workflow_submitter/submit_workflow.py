@@ -10,7 +10,7 @@ from python_workflow_submitter.auth.keycloak_checker import set_token_env_variab
 
 async def submit_workflow(
     w: Workflow,
-    host: str = str(os.environ.get("HOST")),
+    host: str = "https://workflows.diamond.ac.uk/graphql",
     visit: str = str(os.environ.get("VISIT")),
 ):
     yamlstr = w.to_yaml()  # pyright:ignore
@@ -53,7 +53,7 @@ mutation Submit($visit: VisitInput!, $manifest: String!) {
 async def submit_stock_workflow(
     name: str,
     parameters: dict,
-    host: str = str(os.environ.get("HOST")),
+    host: str = "https://workflows.diamond.ac.uk/graphql",
     visit: str = str(os.environ.get("VISIT")),
 ):
     token: str = set_token_env_variable()
