@@ -61,7 +61,7 @@ def test_set_token_env_variable(
         keycloak.token.assert_not_called()
     mock_set_key.assert_has_calls(
         [
-            call("src/.env", "EXPIRY", str(123456789 + 1800)),
+            call("src/.env", "EXPIRY", str(123456789)),
             call("src/.env", "TOKEN", "fake_token"),
             call("src/.env", "REFRESHTOKEN", "fake_refresh"),
         ]

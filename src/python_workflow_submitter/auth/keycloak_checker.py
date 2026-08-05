@@ -59,7 +59,7 @@ def set_token_env_variable() -> str:
         ),
     )
     try:
-        expire_time = int(token_info["exp"]) + 1800
+        expire_time = int(token_info["exp"])
         dotenv.set_key("src/.env", "EXPIRY", str(expire_time))
         dotenv.set_key("src/.env", "TOKEN", token["access_token"].strip("'"))
         dotenv.set_key("src/.env", "REFRESHTOKEN", token["refresh_token"].strip("'"))
