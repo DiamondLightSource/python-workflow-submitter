@@ -16,6 +16,13 @@ Docker          | `docker run ghcr.io/Matt-Carre/python-workflow-submitter:lates
 Releases        | <https://github.com/Matt-Carre/python-workflow-submitter/releases>
 
 To submit your workflow notebook:
+Notably, this requires a .env file in your source folder with the following parameters:
+HOST=https://workflows.diamond.ac.uk/graphql
+VISIT=
+EXPIRY=
+AUTH=
+TOKEN=
+
 
 ```python
 from python_workflow_submitter.submit_workflow import submit_workflow
