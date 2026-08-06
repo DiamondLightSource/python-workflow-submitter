@@ -12,14 +12,14 @@ long_description = (here / "README.md").read_text(encoding="utf-8")
 # Fields marked as "Optional" may be commented out.
 
 setup(
-    name="pws",  # Required
+    name="python_workflow_submitter",  # Required
     # Versions should comply with PEP 440:
     # https://www.python.org/dev/peps/pep-0440/
     #
     # For a discussion on single-sourcing the version across setup.py and the
     # project code, see
     # https://packaging.python.org/guides/single-sourcing-package-version/
-    version="0.4.2",  # Required
+    version="0.4.3",  # Required
     # This is a one-line description or tagline of what your project does. This
     # corresponds to the "Summary" metadata field:
     # https://packaging.python.org/specifications/core-metadata/#summary
