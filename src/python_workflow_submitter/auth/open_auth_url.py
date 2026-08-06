@@ -31,10 +31,13 @@ class CallbackHandler(BaseHTTPRequestHandler):
 
 def token_expired(auth_url: str, port: int) -> bool:
     dotenv.load_dotenv(dotenv_path="src/.env", override=True)
-    expiry_str: str = str(os.environ.get("EXPIRY")).strip("'")
-    if (expiry_str == "" or int(expiry_str)) <= float(time.time()):
-        _open_auth_url(auth_url, port)
-        return True
+    if str(os.environ.get("EXPIRY")) is not None:
+        expiry_str: str = str(os.environ.get("EXPIRY")).strip("'")
+        if (expiry_str == "" or int(expiry_str)) <= float(time.time()):
+            _open_auth_url(auth_url, port)
+            return True
+        else:
+            return False
     else:
         return False
 

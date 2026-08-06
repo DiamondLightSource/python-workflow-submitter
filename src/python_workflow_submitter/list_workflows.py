@@ -9,14 +9,27 @@ from python_workflow_submitter.auth.keycloak_checker import set_token_env_variab
 
 
 # TODO add in maintainer when fixed
-async def list_workflows(
-    limit: int,
-    filter: dict[str, str],
-    host: str = "https://workflows.diamond.ac.uk/graphql",
-):
+async def list_workflows(limit: int = 5, filtervalue: str = "EXAMPLES"):
+    """Lists workflows available to run given the current filter.
+
+    Args:
+        limit (int): maximum number of workflows to return
+        filtervalue (str): filter to apply. Valid values are:
+            ["MX",
+            "EXAMPLES",
+            "MAGNETIC_MATERIALS",
+            "CONDENSED_MATTER",
+            "IMAGING",
+            "BIO_CRYO_IMAGING",
+            "SURFACES",
+            "CRYSTALLOGRAPHY",
+            "SPECTROSCOPY",]
+    """
+    filter = {}
+    filter["scienceGroup"] = filtervalue
     token: str = set_token_env_variable()
     transport = AIOHTTPTransport(
-        url=host,
+        url="https://workflows.diamond.ac.uk/graphql",
         headers={"Authorization": f"Bearer {token}"},
     )
     client = Client(
@@ -34,17 +47,16 @@ async def list_workflows(
         "CRYSTALLOGRAPHY",
         "SPECTROSCOPY",
     ]
-    if "scienceGroup" in filter.keys():
-        if (filter["scienceGroup"]) in valid_values:
-            lim = f"""limit: {str(limit)},"""
-            fil = re.sub(r"'", "", f"""filter: {filter}""")
+    if (filter["scienceGroup"]) in valid_values:
+        lim = f"""limit: {str(limit)},"""
+        fil = re.sub(r"'", "", f"""filter: {filter}""")
 
-            mutation = gql(
-                """query WorkflowTemplates {
+        mutation = gql(
+            """query WorkflowTemplates {
             workflowTemplates("""
-                + lim
-                + fil
-                + """) {
+            + lim
+            + fil
+            + """) {
                 nodes {
                     name
                     title
@@ -52,27 +64,37 @@ async def list_workflows(
             }
         }
         """
-            )
-            result = await client.execute_async(
-                mutation,
-            )
-            json_result = json.loads(re.sub(r"'", '"', str(result)))
-            print(json.dumps(json_result, indent=2))
-        else:
-            print("Filter value must be in: " + str(valid_values))
+        )
+        result = await client.execute_async(
+            mutation,
+        )
+        json_result = json.loads(re.sub(r"'", '"', str(result)))
+        print(json.dumps(json_result, indent=2))
     else:
-        print("Filter key must be 'scienceGroup'")
+        print("Filter value must be in: " + str(valid_values))
 
 
 async def list_workflows_in_visit(
-    limit: int,
-    filter: dict[str, str | dict[str, str | bool]] | None,
-    host: str = "https://workflows.diamond.ac.uk/graphql",
+    limit: int = 5,
+    filter: dict[str, str | dict[str, str | bool]] | None = None,
     visit: str = str(os.environ.get("VISIT")),
 ):
+    """List workflows in a visit, with optional filtering
+
+    Args:
+        limit (int, optional): The maximum number of workflows to describe.
+            Defaults to 5.
+        filter (dict[str, str  |  dict[str, str  |  bool]] | None, optional):
+            The filters you wish to apply to the workflow. Includes:
+            creator (fedID) (str), template (name of template ran) (str),
+            status filter (dict[str,bool]) (whether pending, running, succeeded, failed,
+            or error). Defaults to None.
+        visit (str, optional): The visit to inspect. Defaults to
+            str(os.environ.get("VISIT")).
+    """
     token: str = set_token_env_variable()
     transport = AIOHTTPTransport(
-        url=host,
+        url="https://workflows.diamond.ac.uk/graphql",
         headers={"Authorization": f"Bearer {token}"},
     )
     client = Client(
@@ -118,12 +140,19 @@ async def list_workflows_in_visit(
 
 async def info_about_workflow(
     name: str,
-    host: str = "https://workflows.diamond.ac.uk/graphql",
     visit: str = str(os.environ.get("VISIT")),
 ) -> None:
+    """Prints the name, parameters, template reference, creator id, and status
+    of a specific workflow that is running or was ran on the provided visit.
+
+    Args:
+        name (str): The name of the workflow you wish to look at.
+        visit (str, optional): The visit the workflow is running / was ran on.
+        Defaults to str(os.environ.get("VISIT")).
+    """
     token: str = set_token_env_variable()
     transport = AIOHTTPTransport(
-        url=host,
+        url="https://workflows.diamond.ac.uk/graphql",
         headers={"Authorization": f"Bearer {token}"},
     )
     client = Client(

@@ -7,7 +7,10 @@
 
  Python alternative to creating and running argo workflows in the Data Analysis Platform
 
-This allows for the submission of Hera workflow objects to Diamond's GraphQL API.
+This allows for the submission of yaml files to Diamond's GraphQL API.
+This automatically lints yaml files before submission.
+
+Notably, this requires a .env file in your src/ folder.
 
 What            | Where
 :---:           | :---:
@@ -16,13 +19,6 @@ Docker          | `docker run ghcr.io/Matt-Carre/python-workflow-submitter:lates
 Releases        | <https://github.com/Matt-Carre/python-workflow-submitter/releases>
 
 To submit your workflow notebook:
-Notably, this requires a .env file in your source folder with the following parameters:
-HOST=https://workflows.diamond.ac.uk/graphql
-VISIT=
-EXPIRY=
-AUTH=
-TOKEN=
-
 
 ```python
 from python_workflow_submitter.submit_workflow import submit_workflow
@@ -37,40 +33,36 @@ from python_workflow_submitter.submit_workflow import submit_workflow
 asyncio.run(submit_workflow(w))
 ```
 
-To submit a generic workflow via a graphql mutation in a notebook:
+To submit a generic workflow via a graphql mutation:
 
-```python
-import os
-from python_workflow_submitter.submit_workflow import submit_stock_workflow
-
-await submit_stock_workflow(
-        "example-template",
-        {"png": "True", "jpg": "False", "jpeg": "True", "tif": "True", "tiff": "False"},
-        host= str(os.environ.get("HOST")),
-        visit= str(os.environ.get("VISIT")),
-    )
-```
-Alternatively:
 ```python 
 import asyncio
 from python_workflow_submitter.submit_workflow import submit_workflow
 
-asyncio.run(submit_stock_workflow(
+asyncio.run(
+    submit_stock_workflow(
         "example-template",
-        {"png": "True", "jpg": "False", "jpeg": "True", "tif": "True", "tiff": "False"},
-        host= str(os.environ.get("HOST")),
-        visit= str(os.environ.get("VISIT")),
-    ))
-
+        {"png": True, "jpg": False, "jpeg": True, "tif": True, "tiff": False},
+        visit=str(os.environ.get("VISIT")),
+    )
+)
+```
 To list workflows:
 ```python
 import asyncio
 from python_workflow_submitter.list_workflows import list_workflows
 
-asyncio.run(list_workflows(limit=5,filter={"scienceGroup":"EXAMPLES"}))
-
+asyncio.run(list_workflows(limit=5, filter="EXAMPLES"))
 ```
+To create a helm template in your helm chart folder
+```python 
+import asyncio
+from python_workflow_submitter.create_helm_yaml import create_helm_yaml
 
+create_helm_yaml(
+    "notebook.yaml", "/workspaces/python_workflow_submitter/helm", "values/values.yaml"
+)
+```
 To list workflows in specific visit with optional filtering:
 ```python
 import asyncio
@@ -89,5 +81,5 @@ To list information about a workflow in a visit with a specific name:
 import asyncio
 from python_workflow_submitter.list_workflows import list_workflows_in_visit
 
-asyncio.run(info_about_workflow(name="conditional-steps-tswxm",visit=ks10000-3))
+asyncio.run(info_about_workflow(name="conditional-steps-tswxm", visit="ks10000-3"))
 ```

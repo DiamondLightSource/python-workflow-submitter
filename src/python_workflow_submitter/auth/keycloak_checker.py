@@ -18,6 +18,12 @@ class DecodedToken(TypedDict):
 
 
 def set_token_env_variable() -> str:
+    """Provide the keycloak authentication token for the production graphql api.
+    Requires port 8000 to be unused when ran.
+
+    Returns:
+        str: token obtained via keycloak
+    """
     keycloak_openid = KeycloakOpenID(
         client_id="workflows-cli",
         server_url="https://identity.diamond.ac.uk/",

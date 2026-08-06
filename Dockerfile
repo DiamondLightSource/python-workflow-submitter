@@ -16,6 +16,11 @@ RUN curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/s
 RUN chmod +x ./kubectl
 RUN mv ./kubectl /usr/local/bin
 
+#Install helm
+RUN curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-4
+RUN chmod 700 get_helm.sh
+RUN ./get_helm.sh
+
 # The build stage installs the context into the venv
 FROM developer AS build
 
