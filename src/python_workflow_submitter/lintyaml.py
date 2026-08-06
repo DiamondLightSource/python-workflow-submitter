@@ -2,7 +2,7 @@ import os
 import subprocess
 
 
-def lint_my_yaml(yaml_path: str):
+def lint_yaml(yaml_path: str):
     """Lints a given yaml file with argo lint --offline. If you are intending to lint a
     helm chart, please create it first via helm -s .
 

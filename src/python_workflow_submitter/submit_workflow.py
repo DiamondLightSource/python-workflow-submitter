@@ -5,7 +5,7 @@ from gql import Client, gql
 from gql.transport.aiohttp import AIOHTTPTransport
 
 from python_workflow_submitter.auth.keycloak_checker import set_token_env_variable
-from python_workflow_submitter.lintyaml import lint_my_yaml
+from python_workflow_submitter.lintyaml import lint_yaml
 
 
 async def submit_workflow_yaml(
@@ -19,7 +19,7 @@ async def submit_workflow_yaml(
         visit (str, optional): The visit to run the yaml within.
             Defaults to str(os.environ.get("VISIT")).
     """
-    if lint_my_yaml(path):
+    if lint_yaml(path):
         with open(f"{path}") as yamlfile:
             yamlstr = yamlfile.read().rstrip()
         dotenv.load_dotenv(dotenv_path="src/.env", override=True)

@@ -24,7 +24,7 @@ def test_open_auth_url_normal_function(
     server = mock_http_server.return_value
     server.auth_code = "this_is_your_code"
 
-    _open_auth_url("url", 5173)
+    _open_auth_url("url", 8000)
     server.handle_request.assert_called_once()
     mock_open_browser.assert_called_once_with("url")
     mock_set_key.assert_called_once_with(
@@ -55,7 +55,7 @@ def test_open_auth_url_raises_error(
     server = mock_http_server.return_value
     server.handle_request.side_effect = OSError
 
-    _open_auth_url("url", 5173)
+    _open_auth_url("url", 8000)
     mock_open_browser.assert_called_once_with("url")
     assert os.environ["AUTH"] == ""
     mock_exit.assert_called_once_with(1)
@@ -75,13 +75,20 @@ def test_token_expired(
     mock_time.return_value = 100
     os.environ["EXPIRY"] = "50"
 
-    assert token_expired("url", 5173) is True
+    assert token_expired("url", 8000) is True
 
     mock_load_env.assert_called_once_with(
         dotenv_path="src/.env",
         override=True,
     )
-    mock_open_auth_url.assert_called_once_with("url", 5173)
+    mock_open_auth_url.assert_called_once_with("url", 8000)
+
+
+@patch("python_workflow_submitter.auth.open_auth_url.dotenv.load_dotenv")
+def test_expiry_none(mock_load_env: MagicMock, monkeypatch):
+    monkeypatch.delenv("EXPIRY", raising=False)
+    mock_load_env.assert_not_called()
+    assert token_expired("url", 8000) is False
 
 
 @patch("python_workflow_submitter.auth.open_auth_url._open_auth_url")
@@ -95,7 +102,7 @@ def test_token_not_expired(
     mock_time.return_value = 100
     os.environ["EXPIRY"] = "200"
 
-    assert token_expired("url", 5173) is False
+    assert token_expired("url", 8000) is False
 
     mock_load_env.assert_called_once_with(
         dotenv_path="src/.env",
