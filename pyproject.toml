@@ -58,9 +58,9 @@ dev = [
 python-workflow-submitter = "python_workflow_submitter.__main__:main"
 
 [project.urls]
-GitHub = "https://github.com/Matt-Carre/python-workflow-submitter"
-Homepage = "https://github.com/Matt-Carre/python-workflow-submitter"
-issues = "https://github.com/Matt-Carre/python-workflow-submitter/issues"
+GitHub = "https://github.com/DiamondLightSource/python-workflow-submitter"
+Homepage = "https://github.com/DiamondLightSource/python-workflow-submitter"
+issues = "https://github.com/DiamondLightSource/python-workflow-submitter/issues"
 [[project.authors]] # Further authors may be added by duplicating this section
 email = "matthew.carre@diamond.ac.uk"
 name = "Matthew Carre"
