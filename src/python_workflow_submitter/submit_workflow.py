@@ -12,7 +12,7 @@ async def submit_workflow_yaml(
     path: str,
     visit: str = str(os.environ.get("VISIT")),
 ):
-    """Submits a graphql mutation to run a given yaml file.
+    """Submits a GraphQL mutation to run a given yaml file.
 
     Args:
         path (str): Path to the yaml file you wish to run.
@@ -65,7 +65,7 @@ async def submit_workflow(
     parameters: dict,
     visit: str = str(os.environ.get("VISIT")),
 ):
-    """_summary_
+    """Submits a clusterWorkflowTemplate already in the platform.
 
     Args:
         name (str): Name of the workflow you wish to run.

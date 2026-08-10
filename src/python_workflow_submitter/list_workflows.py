@@ -7,6 +7,8 @@ from gql.transport.aiohttp import AIOHTTPTransport
 
 from python_workflow_submitter.auth.keycloak_checker import set_token_env_variable
 
+# TODO check visit is correct (regex)
+
 
 # TODO add in maintainer when fixed
 async def list_workflows(limit: int = 5, filtervalue: str = "EXAMPLES"):
@@ -79,7 +81,7 @@ async def list_workflows_in_visit(
     filter: dict[str, str | dict[str, str | bool]] | None = None,
     visit: str = str(os.environ.get("VISIT")),
 ):
-    """List workflows in a visit, with optional filtering
+    """List workflows in a visit, with optional filtering.
 
     Args:
         limit (int, optional): The maximum number of workflows to describe.
