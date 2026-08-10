@@ -24,6 +24,9 @@ def set_token_env_variable() -> str:
     Returns:
         str: token obtained via keycloak
     """
+    for key in ("AUTH", "TOKEN", "REFRESHTOKEN", "EXPIRY"):
+        if key not in dotenv.dotenv_values("src/.env"):
+            dotenv.set_key("src/.env", key, "")
     keycloak_openid = KeycloakOpenID(
         client_id="workflows-cli",
         server_url="https://identity.diamond.ac.uk/",
@@ -70,7 +73,7 @@ def set_token_env_variable() -> str:
         dotenv.set_key("src/.env", "TOKEN", token["access_token"].strip("'"))
         dotenv.set_key("src/.env", "REFRESHTOKEN", token["refresh_token"].strip("'"))
     except AttributeError:
-        print("ERROR:")
+        print("ERROR: Attribute not found.")
         exit(1)
     finally:
         dotenv.load_dotenv(dotenv_path="src/.env", override=True)

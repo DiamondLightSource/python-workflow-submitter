@@ -112,9 +112,17 @@ def test_set_token_env_variable_attribute_error(
 
     set_token_env_variable()
 
-    mock_print.assert_called_once_with("ERROR:")
+    mock_print.assert_called_once_with("ERROR: Attribute not found.")
     mock_exit.assert_called_once_with(1)
-    mock_set_key.assert_not_called()
+    mock_set_key.assert_has_calls(
+        [
+            call("src/.env", "AUTH", ""),
+            call("src/.env", "TOKEN", ""),
+            call("src/.env", "REFRESHTOKEN", ""),
+            call("src/.env", "EXPIRY", ""),
+        ],
+        any_order=True,
+    )
     mock_load_env.assert_called_once_with(
         dotenv_path="src/.env",
         override=True,
