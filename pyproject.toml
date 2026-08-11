@@ -162,7 +162,7 @@ description = "Run tests with coverage"
 commands = [
     [
         "pytest",
-        "--cov=python_interface_to_workflows",
+        "--cov=python_workflow_submitter",
         "--cov-report",
         "term",
         "--cov-report",
