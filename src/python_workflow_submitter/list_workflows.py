@@ -6,8 +6,7 @@ from gql import Client, gql
 from gql.transport.aiohttp import AIOHTTPTransport
 
 from python_workflow_submitter.auth.keycloak_checker import set_token_env_variable
-
-# TODO check visit is correct (regex)
+from python_workflow_submitter.check_visit import check_visit
 
 
 # TODO add in maintainer when fixed
@@ -124,20 +123,23 @@ async def list_workflows_in_visit(
     }
     """)
 
-    result = await client.execute_async(
-        query,
-        variable_values={
-            "visit": {
-                "proposalCode": visit[:2],
-                "proposalNumber": int(visit[2:7]),
-                "number": int(visit[-1]),
+    if check_visit(visit):
+        result = await client.execute_async(
+            query,
+            variable_values={
+                "visit": {
+                    "proposalCode": visit[:2],
+                    "proposalNumber": int(visit[2:7]),
+                    "number": int(visit[-1]),
+                },
+                "limit": limit,
+                "filter": filter,
             },
-            "limit": limit,
-            "filter": filter,
-        },
-    )
-    json_result = json.loads(re.sub(r"'", '"', str(result)))
-    print(json.dumps(json_result, indent=2))
+        )
+        json_result = json.loads(re.sub(r"'", '"', str(result)))
+        print(json.dumps(json_result, indent=2))
+    else:
+        print(f"Visit '{visit}' is invalid.")
 
 
 async def info_about_workflow(
@@ -152,45 +154,48 @@ async def info_about_workflow(
         visit (str, optional): The visit the workflow is running / was ran on.
         Defaults to str(os.environ.get("VISIT")).
     """
-    token: str = set_token_env_variable()
-    transport = AIOHTTPTransport(
-        url="https://workflows.diamond.ac.uk/graphql",
-        headers={"Authorization": f"Bearer {token}"},
-    )
-    client = Client(
-        transport=transport,
-        fetch_schema_from_transport=True,
-    )
-    query = gql("""
-    query Workflow(
-    $visit: VisitInput!,
-    $name: String!,
-    ) {
-    workflow(
-        visit: $visit,
-        name: $name,
-    ) {
-        name
-        parameters
-        templateRef
-        creator {creatorId}
-        status {__typename}
+    if check_visit(visit):
+        token: str = set_token_env_variable()
+        transport = AIOHTTPTransport(
+            url="https://workflows.diamond.ac.uk/graphql",
+            headers={"Authorization": f"Bearer {token}"},
+        )
+        client = Client(
+            transport=transport,
+            fetch_schema_from_transport=True,
+        )
+        query = gql("""
+        query Workflow(
+        $visit: VisitInput!,
+        $name: String!,
+        ) {
+        workflow(
+            visit: $visit,
+            name: $name,
+        ) {
+            name
+            parameters
+            templateRef
+            creator {creatorId}
+            status {__typename}
+        }
     }
-}
-    """)
+        """)
 
-    result = await client.execute_async(
-        query,
-        variable_values={
-            "visit": {
-                "proposalCode": visit[:2],
-                "proposalNumber": int(visit[2:7]),
-                "number": int(visit[-1]),
+        result = await client.execute_async(
+            query,
+            variable_values={
+                "visit": {
+                    "proposalCode": visit[:2],
+                    "proposalNumber": int(visit[2:7]),
+                    "number": int(visit[-1]),
+                },
+                "name": name,
             },
-            "name": name,
-        },
-    )
-    if result["workflow"] is not None:
-        print(json.dumps(result, indent=2))
+        )
+        if result["workflow"] is not None:
+            print(json.dumps(result, indent=2))
+        else:
+            print(f"No workflow with name {name} found.")
     else:
-        print(f"No workflow with name {name} found.")
+        print(f"Visit '{visit}' is invalid.")
