@@ -123,4 +123,4 @@ async def test_submit_stock_workflow_bad_visit(
         return_value={"submitWorkflowTemplate": {"name": "workflow123"}}
     )
     await submit_workflow(name="workflow123", parameters={}, visit="BAD")
-    mock_print.assert_called_once()
+    mock_print.assert_called_once_with("Visit 'BAD' is invalid.")

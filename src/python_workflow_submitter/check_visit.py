@@ -2,4 +2,4 @@ import re
 
 
 def check_visit(vis: str):
-    return re.match(r"[a-zA-Z][a-zA-Z]\d\d\d\d\d-\d", vis)
+    return re.match(r"([a-z]{2})([1-9]\d*)-([1-9]\d*)", vis)
