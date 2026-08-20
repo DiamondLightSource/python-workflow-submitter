@@ -124,13 +124,14 @@ async def list_workflows_in_visit(
     """)
 
     if check_visit(visit):
+        proposal_code, proposal_number, number = check_visit(visit).groups()
         result = await client.execute_async(
             query,
             variable_values={
                 "visit": {
-                    "proposalCode": visit[:2],
-                    "proposalNumber": int(visit[2:7]),
-                    "number": int(visit[-1]),
+                    "proposalCode": proposal_code,
+                    "proposalNumber": int(proposal_number),
+                    "number": int(number),
                 },
                 "limit": limit,
                 "filter": filter,
@@ -181,14 +182,14 @@ async def info_about_workflow(
         }
     }
         """)
-
+        proposal_code, proposal_number, number = check_visit(visit).groups()
         result = await client.execute_async(
             query,
             variable_values={
                 "visit": {
-                    "proposalCode": visit[:2],
-                    "proposalNumber": int(visit[2:7]),
-                    "number": int(visit[-1]),
+                    "proposalCode": proposal_code,
+                    "proposalNumber": int(proposal_number),
+                    "number": int(number),
                 },
                 "name": name,
             },
