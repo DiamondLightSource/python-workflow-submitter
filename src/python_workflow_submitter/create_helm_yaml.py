@@ -22,7 +22,7 @@ def create_helm_yaml(
     """
     if os.path.exists(f"{chart_dir}/templates/{yaml_name}"):
         if not values_dir and os.path.exists(f"{chart_dir}/values.yaml"):
-            valuepath = f" -f {values_dir}/values.yaml"
+            valuepath = f" -f {chart_dir}/values.yaml"
             yamlstr = subprocess.run(
                 f"helm template . -s templates/{yaml_name} {valuepath}",
                 cwd=chart_dir,
