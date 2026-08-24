@@ -127,3 +127,43 @@ def test_set_token_env_variable_attribute_error(
         dotenv_path="src/.env",
         override=True,
     )
+
+
+@patch("python_workflow_submitter.auth.keycloak_checker.dotenv.dotenv_values")
+@patch("python_workflow_submitter.auth.keycloak_checker.dotenv.load_dotenv")
+@patch("python_workflow_submitter.auth.keycloak_checker.dotenv.set_key")
+@patch("python_workflow_submitter.auth.keycloak_checker.KeycloakOpenID")
+@patch("python_workflow_submitter.auth.keycloak_checker.generate_code_verifier")
+@patch("python_workflow_submitter.auth.keycloak_checker.generate_code_challenge")
+@patch("python_workflow_submitter.auth.keycloak_checker.token_expired")
+def test_set_token_env_variable_all_keys_already_present(
+    mock_token_expired: MagicMock,
+    mock_gen_code_challenge: MagicMock,
+    mock_gen_code_verifier: MagicMock,
+    mock_gen_keycloak_id: MagicMock,
+    mock_set_key: MagicMock,
+    mock_load_env: MagicMock,
+    mock_dotenv_values: MagicMock,
+    monkeypatch,
+):
+    mock_dotenv_values.return_value = {
+        "AUTH": "x",
+        "TOKEN": "x",
+        "REFRESHTOKEN": "x",
+        "EXPIRY": "x",
+    }
+    mock_gen_code_verifier.return_value = "verifier"
+    mock_gen_code_challenge.return_value = ("challenge", "S256")
+    mock_token_expired.return_value = False
+    monkeypatch.setenv("REFRESHTOKEN", "refresh")
+
+    keycloak = MagicMock()
+    mock_gen_keycloak_id.return_value = keycloak
+    token = {"access_token": "fake_token", "refresh_token": "fake_refresh"}
+    keycloak.refresh_token.return_value = token
+    keycloak.decode_token.return_value = {"exp": 123456789}
+
+    set_token_env_variable()
+
+    seed_calls = [c for c in mock_set_key.call_args_list if c.args[-1] == ""]
+    assert seed_calls == []
