@@ -19,7 +19,7 @@ class DecodedToken(TypedDict):
 
 def set_token_env_variable() -> str:
     """Provide the keycloak authentication token for the production graphql api.
-    Requires port 8000 to be unused when ran.
+    Requires port 18000 to be unused when ran.
 
     Returns:
         str: token obtained via keycloak
@@ -34,7 +34,7 @@ def set_token_env_variable() -> str:
         client_secret_key="",
         pool_maxsize=1,
     )
-    port = 8000
+    port = 18000
     code_verifier = generate_code_verifier()
     code_challenge, code_challenge_method = generate_code_challenge(code_verifier)
     auth_url = keycloak_openid.auth_url(
